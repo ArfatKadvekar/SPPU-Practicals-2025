@@ -5,7 +5,7 @@
 using namespace std;
 class Node
 {
-public:
+public: //fix this
     int data;
     Node *left;
     Node *right;
@@ -78,7 +78,7 @@ public:
         }
     }
 
-    void postOrder(Node *temp)
+    void postOrder(Node *temp) //this doesn't works fix this too
     {
         if (temp == nullptr)
             return;
@@ -114,7 +114,6 @@ public:
         }
     }
 
-    // Get Height of the Tree (Non-Recursive)
     int height(Node* root) {
         if (root == nullptr) return 0;
         queue<Node*> q;
@@ -244,6 +243,9 @@ public:
 
     Node* getRoot() {
         return root;
+    }
+    int getData(){
+        return root->data;
     }
 };
 
