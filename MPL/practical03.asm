@@ -14,8 +14,11 @@
 
 section .data
 counter db 05h
-arr db 05h, 0c3h, 0ah, 09h, 35h
- 
+arr dq 1234567891234567h, 0c325487652154687h, 0a789654574521354h, 0912357895314455h, 3545645445666556h
+
+section .bss
+result resb 02
+
 section .text
     global _start
 
@@ -31,15 +34,13 @@ iter:
  x: 
     inc rdi
     dec byte[counter]
-    
     jnz iter
-   
-call h2a
-jmp y
-
-h2a:
-
-ret
+       
 y: 
 exit 60                 
+
+
+;TODO
+;need to improve this code especially that hex to ascii part
+
 
