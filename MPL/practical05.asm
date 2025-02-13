@@ -14,17 +14,21 @@
 
 section .data
 counter db 05h
+count db 02
 pcount db 00h
 ncount db 00h
 
-pmsg db "The count of positive numbers is:",10
+pmsg db "The count of positive numbers is: "
 pmsglen equ $-pmsg
 
-nmsg db "The count of negative numbers is:",10
+nmsg db 10, "The count of negative numbers is: "
 nmsglen equ $-nmsg
 
 arr dq 23456789abcdef01h, 0d3456789abcdef01h, 0a9876543210fedc0h, 015789abcde12345h, 5abcdef123456789h
 
+section .bss
+    result resb 20
+    val resb 20
 
 section .text
     global _start
@@ -47,20 +51,34 @@ x:
 next: 	add rdi, 8
 	dec byte[counter]
 	jnz iter
-       
+
+debug1:
+rw 01, pmsg, pmsglen
+mov dl, byte[pcount]
+mov byte[val], dl
+call h2a
+
+rw 01, nmsg, nmsglen
+mov dl, byte[ncount]
+mov byte[val], dl
+call h2a
+
 debug:
- rw 01, pmsg, pmsglen
- rw 01, pcount, 02h
- rw 01, nmsg, nmsglen
- rw 01, ncount, 02h
+jmp ex
 
 h2a:
-    mov byte[strlen], al
-    cmp byte[strlen], 09h
-    jle add30
-    add byte[strlen], 07h  
- add30: add byte[strlen], 30h
-exit 60                 
+
+mov al,byte[val]
+xh:
+cmp al,09h
+jle yh
+add al,07h
+yh:
+add al, 30h
+mov byte[result],al
+rw 01,result,01h
+ret
+ex: exit 60                 
 
 
 
