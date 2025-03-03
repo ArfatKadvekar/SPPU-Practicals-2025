@@ -143,7 +143,7 @@ public:
 
 int main()
 {
-    HashTable ht;
+    HashTable ht,ht1;
     int choice;
 
     while (true)
@@ -180,12 +180,15 @@ int main()
                 cout << "Enter the Phone Number (10 digits): ";
                 cin >> phoneNumber;
                 key = phoneNumber[9] - '0';
-                ht.insertWithoutReplacement(key, phoneNumber);
+                ht1.insertWithoutReplacement(key, phoneNumber);
             }
             break;
 
         case 3:
+            cout << "---------------Table With Replacement-------------------" <<endl;
             ht.printTable();
+            cout << "---------------Table Without Replacement----------------" <<endl;
+            ht1.printTable();
             break;
 
         case 4:
@@ -215,7 +218,7 @@ int main()
                 cout << "Enter the Phone Number to be searched: ";
                 cin >> phoneNumber;
                 s_key = phoneNumber[9] - '0';
-                DataItem* result = ht.searchWithoutReplacement(s_key, comparisons);
+                DataItem* result = ht1.searchWithoutReplacement(s_key, comparisons);
                 if (result != nullptr)
                 {
                     cout << "Found item: Key = " << result->key << ", Phone Number = " << result->phoneNumber << endl;
