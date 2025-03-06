@@ -14,10 +14,10 @@
 
 section .data
 
-menu db 10,13, "----------Menu----------", 10,13, "1. Addition", 10,13, "2. Subtraction", 10,13, "3. Multiplication", 10,13, "4. Signed Multiplication", 10,13, "5. Division", 10,13, "6. Signed Division", 10,13, "7. Exit", 10,13, 10,13, "Enter choice : "
+menu db 10,13, "---------- Menu ----------", 10,13, "1. Addition", 10,13, "2. Subtraction", 10,13, "3. Multiplication", 10,13, "4. Signed Multiplication", 10,13, "5. Division", 10,13, "6. Signed Division", 10,13, "7. Exit", 10,13, "Enter choice : "
 menulen equ $-menu
 
-umsg db "h", 10,13
+umsg db "h", 10
 umsglen equ $-umsg
 
 qmsg db "Quotient: "
@@ -32,8 +32,8 @@ exmsglen equ $-exmsg
 	un1 dq 0000000000000040h
 	un2 dq 0000000000000020h
 	
-	sn1 dq 8000000000000060h
-	sn2 dq 8000000000000020h
+	sn1 dq 0xFFFFFFFFFFFFFFF8
+	sn2 dq 0x0000000000000002
 		
 	count db 10h
 	
@@ -49,8 +49,9 @@ section .text
     global _start
 
 _start:      
+menud:	
 	rw 1, menu, menulen
-	rw 0, choice, 01h
+	rw 0, choice, 02h
 	
 	cmp byte[choice], 31h
 	je add_case
@@ -69,34 +70,37 @@ _start:
 	
 	cmp byte[choice], 36h
 	je sdiv_case
-		
-	cmp byte[choice], 37h
-	rw 01, exmsg, exmsglen
-	je ex
 	
+	cmp byte[choice], 37h
+	je ex2
+		
 	add_case:
 		call addproc
-		jmp ex
+		jmp menud
 		
 	sub_case:
 		call subproc
-		jmp ex
+		jmp menud
 		
 	mul_case:
 		call mulproc
-		jmp ex
+		jmp menud
 		
 	smul_case:
 		call smulproc
-		jmp ex
+		jmp menud
 		
 	div_case:
 		call divproc
-		jmp ex
+		jmp menud
 	
 	sdiv_case:
 		call sdivproc
-		jmp ex
+		jmp menud
+
+ex2: 
+rw 01, exmsg, exmsglen
+jmp ex
 
 addproc:
 	mov rax, [un1]
@@ -144,19 +148,20 @@ divproc:
 sdivproc: 
 	xor rdx, rdx
 	mov rax, qword[sn1]
-	mov ebx, dword[sn2]
-	idiv ebx
-debug1:	mov qword[squo], rax
+	mov rbx, qword[sn2]
+debug1:	idiv rbx
+debug2:	
+	mov qword[squo], rax
 	mov [srmnd], rdx
-	rw 01, qmsg, qmsglen
+debug3:	rw 01, qmsg, qmsglen
 	mov rax, [squo]
-	call h2a
+debug4:	call h2a
 	rw 01, rmsg, rmsglen
 	mov rax, [srmnd]
-	call h2a
+debug5:	call h2a
 	ret
 	
-debug:
+debug0:
 
 h2a:
     mov byte[count], 10h
