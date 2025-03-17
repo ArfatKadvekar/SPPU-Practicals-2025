@@ -16,11 +16,11 @@ public:
 
 class HashTable {
 private:
-    HashNode** htable;
-    int tableSize;
+    HashNode** htable;  
+    int tableSize;      
 
     int HashFunc(int key) {
-        return key % tableSize;
+        return key % tableSize;  // Simple hash function
     }
 
 public:
@@ -45,28 +45,33 @@ public:
         delete[] htable;
     }
 
+    // Insert method to add key-value pair to the hash table
     void Insert(int key, int value) {
         int hash_val = HashFunc(key);
         HashNode* entry = htable[hash_val];
 
+        // Check if the key already exists in the chain, update its value if so
         while (entry != nullptr) {
             if (entry->key == key) {
-                entry->value = value;
+                entry->value = value;  // Update value for the key
                 return;
             }
             entry = entry->next;
         }
 
+        // If key doesn't exist, create a new node and insert it at the beginning of the chain
         HashNode* newNode = new HashNode(key, value);
         newNode->next = htable[hash_val];
         htable[hash_val] = newNode;
     }
 
+    // Delete method to remove a key-value pair from the hash table
     void Delete(int key) {
         int hash_val = HashFunc(key);
         HashNode* entry = htable[hash_val];
         HashNode* prev = nullptr;
 
+        // Traverse the chain to find the key
         while (entry != nullptr && entry->key != key) {
             prev = entry;
             entry = entry->next;
@@ -77,15 +82,17 @@ public:
             return;
         }
 
+        // Key found, delete the node
         if (prev == nullptr) {
-            htable[hash_val] = entry->next;
+            htable[hash_val] = entry->next;  // Remove the first node in the chain
         } else {
-            prev->next = entry->next;
+            prev->next = entry->next;  // Bypass the node to delete it
         }
         delete entry;
         cout << "Element Deleted" << endl;
     }
 
+    // Find method to search for a key-value pair in the hash table
     int Find(int key) {
         int hash_val = HashFunc(key);
         HashNode* entry = htable[hash_val];
@@ -102,6 +109,7 @@ public:
         return -1;
     }
 
+    // Display method to show the contents of the hash table
     void Display() {
         cout << "------------------------------------------------------------" << endl;
         cout << "Displaying HashTable contents:" << endl;
