@@ -9,32 +9,34 @@ public:
     }
 
     void display(int mat[5][5], int v) {
-        for (int i = 1; i <= v; i++) {
-            for (int j = 1; j <= v; j++) {
+        for (int i = 0; i < v; i++) {
+            for (int j = 0; j < v; j++) {
                 cout << mat[i][j] << " ";
             }
             cout << endl;
         }
     }
 
-    void prims(int G[5][5], int v) {
+    void prims(int G[5][5], int v, int n) {
         int count = 1;
         int A[20];
         int min = 9999, t1, t2, wt = 0;
         int visited[20] = {0};
         int result[20][20] = {0};
         
-        A[0] = 1;
-        visited[1] = 1;
-
+        A[0] = n;
+        visited[n] = 1;
+        cout << v << endl;
         while (count < v) {
             min = 9999;
             for (int i = 0; i < count; i++) {
-                for (int j = 1; j <= v; j++) {
-                    if (visited[i] == 1 && G[A[i]][j] != 0 && visited[j] == 0 && G[A[i]][j] < min) {
+                for (int j = 0; j < v; j++) {
+                    if (G[A[i]][j] != 0 && visited[j] == 0 && G[A[i]][j] < min) {
                         min = G[A[i]][j];
+                        cout << min << endl;
                         t1 = A[i];
                         t2 = j;
+                        cout << t1 << " " << t2 << endl;
                     }
                 }
             }
@@ -43,15 +45,19 @@ public:
                 visited[t2] = 1;
                 result[t1][t2] = result[t2][t1] = min;
                 wt += min;
+                G[t1][t2] = {0};
+                G[t2][t1] = {0};
+                cout << count << endl;
                 A[count++] = t2;
+                cout << count << endl;
             }
 
             G[t1][t2] = G[t2][t1] = 0;
         }
 
         cout << "Minimum Spanning Tree (MST):" << endl;
-        for (int i = 1; i <= v; i++) {
-            for (int j = 1; j <= v; j++) {
+        for (int i = 0; i < v; i++) {
+            for (int j = 0; j < v; j++) {
                 if (result[i][j] != 0)
                     cout << i << " - " << j << ": " << result[i][j] << endl;
             }
@@ -62,13 +68,13 @@ public:
 
 int main() {
     Graph g;
-    int mat[5][5] = {0}, v, w;
+    int mat[5][5] = {0}, v, w, n = 0;
 
     cout << "Enter the number of vertices: ";
     cin >> v;
 
-    for (int i = 1; i <= v; i++) {
-        for (int j = i + 1; j <= v; j++) {
+    for (int i = 0; i < v; i++) {
+        for (int j = i + 1; j < v; j++) {
             cout << "Enter weight for edge " << i << " - " << j << ": ";
             cin >> w;
             g.adj_matrix(mat, i, j, w);
@@ -78,7 +84,7 @@ int main() {
     cout << "Adjacency Matrix:" << endl;
     g.display(mat, v);
 
-    g.prims(mat, v);
+    g.prims(mat, v, n = 0);
 
     return 0;
 }
