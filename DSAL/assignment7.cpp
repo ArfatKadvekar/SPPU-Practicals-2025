@@ -3,12 +3,12 @@ using namespace std;
 
 class Graph {
 public:
-    void adj_matrix(int mat[5][5], int i, int j, int w) {
+    void adj_matrix(int mat[10][10], int i, int j, int w) {
         mat[i][j] = w;
         mat[j][i] = w;
     }
 
-    void display(int mat[5][5], int v) {
+    void display(int mat[10][10], int v) {
         for (int i = 0; i < v; i++) {
             for (int j = 0; j < v; j++) {
                 cout << mat[i][j] << " ";
@@ -17,7 +17,7 @@ public:
         }
     }
 
-    void prims(int G[5][5], int v, int n) {
+    void prims(int G[10][10], int v, int n) {
         int count = 1;
         int A[20];
         int min = 9999, t1, t2, wt = 0;
@@ -26,17 +26,14 @@ public:
         
         A[0] = n;
         visited[n] = 1;
-        cout << v << endl;
         while (count < v) {
             min = 9999;
             for (int i = 0; i < count; i++) {
                 for (int j = 0; j < v; j++) {
                     if (G[A[i]][j] != 0 && visited[j] == 0 && G[A[i]][j] < min) {
                         min = G[A[i]][j];
-                        cout << min << endl;
                         t1 = A[i];
                         t2 = j;
-                        cout << t1 << " " << t2 << endl;
                     }
                 }
             }
@@ -45,11 +42,7 @@ public:
                 visited[t2] = 1;
                 result[t1][t2] = result[t2][t1] = min;
                 wt += min;
-                G[t1][t2] = {0};
-                G[t2][t1] = {0};
-                cout << count << endl;
                 A[count++] = t2;
-                cout << count << endl;
             }
 
             G[t1][t2] = G[t2][t1] = 0;
@@ -68,7 +61,7 @@ public:
 
 int main() {
     Graph g;
-    int mat[5][5] = {0}, v, w, n = 0;
+    int mat[10][10] = {0}, v, w, n = 0;
 
     cout << "Enter the number of vertices: ";
     cin >> v;
