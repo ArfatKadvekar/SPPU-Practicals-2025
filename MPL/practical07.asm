@@ -131,9 +131,9 @@ iterh2:
     add dl, 30h
     mov [rbx], dl
     inc rbx
-    dec byte[count]
+    dec byte[count2]
     jnz iterh2
-    rw 01, result, 32
+    rw 01, result, 8
     rw 01, endl, endlen
 ret
 
