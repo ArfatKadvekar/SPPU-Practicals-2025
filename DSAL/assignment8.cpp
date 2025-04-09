@@ -1,106 +1,231 @@
+/*
+Given sequence k = k1 <k2 < … <kn of n sorted keys, with a successful and unsuccessful
+search probability pi and qi for each key ki. Build the Binary search tree that
+has the least search cost given the access probability for each key.
+*/
+
 #include <iostream>
-#include <climits>
 using namespace std;
 
-class node {
-    int data;
-    node *lchild, *rchild;
-    friend class obst;
+class Node {
 public:
-    node(int x) {
-        data = x;
-        lchild = rchild = nullptr;
+    int key;
+    Node *left, *right;
+    Node(int k) {
+        key = k;
+        left = right = NULL;
     }
 };
 
-class obst {
-    node *root;
-    double w[100][100];
-    double c[100][100];
-    int r[100][100];
+class OBST {
+    double* p;
+    double* q;
+    double** w;
+    double** c;
+    int** r;
+    int n;
+    int* keys;
+    Node* root;
 
 public:
-    obst() {
-        root = nullptr;
+    OBST() {
+        root = NULL;
+        p = q = nullptr;
+        w = c = nullptr;
+        r = nullptr;
+        keys = nullptr;
     }
 
-    void calculate_wt(double *p, double *q, int n) {
-        for (int i = 0; i < n; i++) {
-            w[i][i] = q[i];
-            r[i][i] = c[i][i] = 0;
-            w[i][i+1] = q[i] + q[i+1] + p[i+1];
-            r[i][i+1] = i+1;
-            c[i][i+1] = w[i][i+1];
+    ~OBST() {
+        delete[] p;
+        delete[] q;
+        delete[] keys;
+        for (int i = 0; i <= n; i++) {
+            delete[] w[i];
+            delete[] c[i];
+            delete[] r[i];
+        }
+        delete[] w;
+        delete[] c;
+        delete[] r;
+    }
+
+    void input() {
+        cout << "\nEnter number of keys: ";
+        cin >> n;
+
+        p = new double[n + 1];
+        q = new double[n + 1];
+        keys = new int[n + 1];
+
+        w = new double*[n + 1];
+        c = new double*[n + 1];
+        r = new int*[n + 1];
+        for (int i = 0; i <= n; i++) {
+            w[i] = new double[n + 1]{};
+            c[i] = new double[n + 1]{};
+            r[i] = new int[n + 1]{};
         }
 
-        w[n][n] = q[n];
-        r[n][n] = c[n][n] = 0;
+        cout << "Enter keys in sorted order:\n";
+        for (int i = 1; i <= n; i++) {
+            cout << "Key " << i << ": ";
+            cin >> keys[i];
+        }
+
+        cout << "Enter successful search probabilities (p1 to pn):\n";
+        for (int i = 1; i <= n; i++) {
+            cout << "p" << i << ": ";
+            cin >> p[i];
+        }
+
+        cout << "Enter unsuccessful search probabilities (q0 to q" << n << "):\n";
+        for (int i = 0; i <= n; i++) {
+            cout << "q" << i << ": ";
+            cin >> q[i];
+        }
+    }
+
+    void buildOBST() {
+        for (int i = 0; i <= n; i++) {
+            w[i][i] = q[i];
+            c[i][i] = 0;
+            r[i][i] = 0;
+            if (i < n) {
+                w[i][i + 1] = q[i] + q[i + 1] + p[i + 1];
+                c[i][i + 1] = w[i][i + 1];
+                r[i][i + 1] = i + 1;
+            }
+        }
 
         for (int m = 2; m <= n; m++) {
             for (int i = 0; i <= n - m; i++) {
                 int j = i + m;
-                w[i][j] = w[i][j-1] + p[j] + q[j];
-                
-                double min = INT_MAX;
-                for (int i1 = i + 1; i1 < j; i1++) {
-                    double sum1 = c[i][i1 - 1] + c[i1][j];
-                    if (sum1 < min) {
-                        min = sum1;
-                        r[i][j] = i1;
+                w[i][j] = w[i][j - 1] + p[j] + q[j];
+                double minCost = 99999;
+                int k = 0;
+                for (int k1 = i + 1; k1 <= j; k1++) {
+                    double cost = c[i][k1 - 1] + c[k1][j];
+                    if (cost < minCost) {
+                        minCost = cost;
+                        k = k1;
                     }
                 }
-                c[i][j] = w[i][j] + min;
+                c[i][j] = w[i][j] + c[i][k - 1] + c[k][j];
+                r[i][j] = k;
             }
         }
 
-        root = create_tree(0, n);
+        root = createTree(0, n);
+        cout << "\nTree built successfully." << endl;
     }
 
-    node* create_tree(int i, int j) {
-        if (i >= j) return nullptr;
+    Node* createTree(int i, int j) {
+        if (i == j) return NULL;
         int k = r[i][j];
-        node* newNode = new node(k);
-        newNode->lchild = create_tree(i, k - 1);
-        newNode->rchild = create_tree(k, j);
-        return newNode;
+        Node* t = new Node(keys[k]);
+        t->left = createTree(i, k - 1);
+        t->right = createTree(k, j);
+        return t;
     }
 
-        void print_tree(node* root) {
-        if (root == nullptr) return;
-
-        cout << "Node: " << root->data << endl; 
-        print_tree(root->lchild);  
-        print_tree(root->rchild);  
+    void showInorder(Node* node) {
+        if (!node) return;
+        showInorder(node->left);
+        cout << node->key << " ";
+        showInorder(node->right);
     }
 
-    void print() {
-        print_tree(root);
+    void showPreorder(Node* node) {
+        if (!node) return;
+        cout << node->key << " ";
+        showPreorder(node->left);
+        showPreorder(node->right);
+    }
+
+    void showParentChild(Node* node, int parent = -1) {
+        if (!node) return;
+
+        cout << endl << "+---------------------------------------------------------+" << endl;
+
+        // Left child
+        cout << "| Left : ";
+        if (node->left)
+            cout << node->left->key << " ";
+        else
+            cout << "NULL ";
+
+        // Node + Parent/Root
+        cout << "| Node : " << node->key;
+        if (parent == -1)
+            cout << " (Root) ";
+        else {
+            // Add spacing to align based on key width
+            if (node->key < 10)
+                cout << " (Parent: " << parent << ") ";
+            else
+                cout << " (Parent: " << parent << ") ";
+        }
+
+        // Right child
+        cout << "| Right : ";
+        if (node->right)
+            cout << node->right->key << " |";
+        else
+            cout << "NULL |";
+
+        cout << endl << "+---------------------------------------------------------+" << endl;
+
+        showParentChild(node->left, node->key);
+        showParentChild(node->right, node->key);
+    }
+
+    void displayTreeDetails() {
+        cout << "\nInorder Traversal : ";
+        showInorder(root);
+        cout << "\nPreorder Traversal : ";
+        showPreorder(root);
+        cout << "\n\n";
+
+        cout << "Parent-Child View:\n";
+        showParentChild(root);
+
+        cout << "\nLeast Search Cost = " << c[0][n] << endl;
+    }
+
+    void menu() {
+        int choice;
+        do {
+            cout << "\n======== Menu =======\n";
+            cout << "1. Input Data\n";
+            cout << "2. Build OBST\n";
+            cout << "3. Show Tree Details\n";
+            cout << "4. Exit\n";
+            cout << "\nEnter choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    input();
+                    break;
+                case 2:
+                    buildOBST();
+                    break;
+                case 3:
+                    displayTreeDetails();
+                    break;
+                case 4:
+                    cout << "Exiting...\n";
+                    break;
+                default:
+                    cout << "Invalid choice. Try again.\n";
+            }
+        } while (choice != 0);
     }
 };
 
 int main() {
-    obst ob;
-    int n;
-
-    cout << "Enter the number of keys: ";
-    cin >> n;
-
-    double p[100], q[100];
-
-    cout << "Enter the probabilities of successful searches (p):\n";
-    for (int i = 0; i < n; i++) {
-        cin >> p[i];
-    }
-
-    cout << "Enter the probabilities of unsuccessful searches (q):\n";
-    for (int i = 0; i <= n; i++) {
-        cin >> q[i];
-    }
-
-    ob.calculate_wt(p, q, n);
-    
-    cout << "The Optimal Binary Search Tree (OBST) structure:\n";
-    ob.print();
-
+    OBST tree;
+    tree.menu();
     return 0;
 }
