@@ -66,7 +66,7 @@ iter:	mov qword[var], rsi
 	mov rdi, arr + (7*8)
 	mov rcx, 05h
 	std
-	req movsq
+	rep movsq
 	
 	rw 01, dmsg, dmsglen
 	
