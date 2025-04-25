@@ -1,129 +1,102 @@
-section .data
-    msg1 db "Your Number is: "
-    msg1len equ $-msg1
-
-    msg2 db "Factorial is: "
-    msg2len equ $-msg2
-
-msg3 db "Factorial is 01"
-msg3len equ $-msg3
-nl db 10
-
-count db 0
-       
-section .bss
-  num resb 1
-temp resb 1
-res resb 8
-
-
-%macro rw 3
-    mov rax, %1
-    mov rdi, %1
-    mov rsi, %2
-    mov rdx, %3
-    syscall
+%macro rwcall 3
+	mov rax,%1
+	mov rdi,%1
+	mov rsi,%2
+	mov rdx,%3
+	syscall
 %endmacro
 
+section .data
+	
+	op1 db 0xa, "Factorial of "
+	op1len equ $-op1
+	
+	fa1 db "0000000000000001", 0xa, 0xa
+	fa1len equ $-fa1
+	
+	sep db " : "
+	seplen equ $-sep
+	
+	n db 0xa,0xa
+	nl equ $-n
 
-section .text
+section .bss
+	count resb 1
+	num resb 1
+	fa resb 16
 global _start
-_start:
-    pop rbx  ; Discrading argument count
-    pop rbx  ; Discarding program name
-    pop rbx  ; Storing number in rbx
-
-; storing in num variable
-    mov al, byte[rbx]
-    mov [num], al
-
-; Printing number
-    rw 1, msg1, msg1len
-rw 1, num, 1
-
-; Handling 0 and 1
-cmp byte[num], 31h
-je one
-cmp byte[num], 30h
-je one
-
-
-; Converting to hex
-mov bl, byte[num]
-call A2H
-
-xor rax, rax
-xor rdx, rdx
-
-rw 1, nl, 1
-
-mov al, byte[num]
-
-; Preparing stack.
-iter:
-push rax
-inc byte[count]
-dec rax
-cmp rax, 1
-jne iter
-
-push rax
-xor rax, rax
-
-pop rax
-
-ft:
-pop rdx
-mul rdx
-dec byte[count]
-jnz ft
-
-mov qword[res], rax
-
-rw 1, msg2, msg2len
-call H2A
-
-jmp exit
-
-one:
-rw 1, nl, 1
-rw 1, msg3, msg3len
-jmp exit
-
-; Procs
-
-A2H:                              
-cmp bl, 39h                        
-jbe down
-sub bl, 7h                        
-down:
-sub bl, 30h                        
-mov [num], bl                      
-ret
-
-H2A:
-mov rbx, qword[res]
-mov byte[count], 8
-loop1:
-rol ebx, 4
-mov al, bl
-and al, 0FH
-cmp al, 09H
-jg a1
-add al, 30H
-jmp a2
-
-a1: add al, 37H
-
-a2: mov [temp], al
-rw 1, temp, 1
-dec byte[count]
-jnz loop1
-
-ret
-
-exit:
-mov rax, 60
-mov rdi, 0
-syscall
-
+section .text
+_start:	
+		pop rdi
+		pop rdi
+		pop rdi
+		
+		mov bl, byte[rdi]
+		
+		mov [num], rdi
+		rwcall 1,op1,op1len
+		rwcall 1,[num],1
+		rwcall 1,sep,seplen
+	
+		call a2h
+		
+		cmp rbx, 1
+		jbe print1
+		
+		mov rax,rbx
+		call fact
+		
+		mov rbx, fa
+		mov byte[count], 16
+		call h2a
+		rwcall 1,fa,16
+		rwcall 1,n,nl
+		jmp exit
+		
+		
+		print1:
+			rwcall 1,fa1,fa1len
+			jmp exit
+			
+			
+		fact:
+			cmp rbx, 1
+			jbe f1
+			dec rbx
+			mul rbx
+			call fact			
+			f1:
+				ret
+			
+		
+		a2h:
+			cmp bl,39h
+			jbe y
+			sub bl,07h
+			y:
+				sub bl,30h
+			mov al,bl
+			ret
+		
+		
+		h2a:	
+			again:
+				rol rax,04h
+				mov rdx,rax
+				and rdx, 0Fh
+				cmp dl, 09h
+				jle x
+				add  dl, 07h
+				x:
+					add dl, 30h
+				mov [rbx], dl
+				inc rbx
+				dec byte[count]
+				jnz again
+			ret
+			
+			
+		exit:
+			mov rax,60
+			mov rdi,0
+			syscall
