@@ -1,6 +1,6 @@
 %macro rw 3
 mov rax, %1
-mov rdi, 01
+mov rdi, %1
 mov rsi, %2
 mov rdx, %3
 syscall

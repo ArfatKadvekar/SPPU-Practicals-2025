@@ -11,7 +11,7 @@ section .data
 	op1 db 0xa, "Factorial of "
 	op1len equ $-op1
 	
-	fa1 db "0000000000000001", 0xa, 0xa
+	fa1 db "0000000000000001", 10h, 10h
 	fa1len equ $-fa1
 	
 	sep db " : "
