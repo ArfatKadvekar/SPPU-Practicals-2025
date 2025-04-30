@@ -21,6 +21,9 @@ msglen equ $-msg
 msg1 db "The Numbers are:",10
 msglen1 equ $-msg1
 
+endl db 10
+endlen equ $-endl
+
 section .bss
     num resb 85   
            
@@ -38,6 +41,7 @@ input_loop:
     jnz input_loop
      
     mov byte[count], 5 ; reset counter
+    rw 01, endl, endlen
     rw 01, msg1, msglen1  
     mov rbx, num 
 

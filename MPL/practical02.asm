@@ -35,6 +35,6 @@ _start:
     add byte[strlen], 07h  
  y: add byte[strlen], 30h
  rw 01, msg1, msglen1
- rw 01, strlen, 1  
+ rw 01, strlen, 1
 exit 60                 
 
