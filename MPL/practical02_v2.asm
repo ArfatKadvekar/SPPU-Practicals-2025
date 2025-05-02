@@ -1,3 +1,4 @@
+
 %macro rw 3
     mov rax, %1        
     mov rdi, %1          
@@ -13,7 +14,8 @@
 %endmacro
 
 section .data
-count db 02
+count db 02                                     ;counter set
+
 msg db "Enter the String:",10
 msglen equ $-msg
 
@@ -22,9 +24,8 @@ msglen1 equ $-msg1
 
 
 section .bss
-    string resb 20
-    strlen resb 20  
-    arr resb 02
+    string resb 20 
+    length resb 02
            
 section .text
     global _start
@@ -32,11 +33,12 @@ section .text
 _start:      
     rw 01, msg, msglen
     rw 00, string, 20
-    mov rbx, arr
+    mov rbx, length
     
     mov byte[count], 02h
 
-    
+;HEX TO ASCII CONVERSION  
+
 iter: 
     rol al, 04h
     mov dl, al
@@ -53,6 +55,5 @@ iter:
     jnz iter
     
  rw 01, msg1, msglen1
- rw 01, arr, 02  
+ rw 01, length, 02  
 exit 60                 
-
