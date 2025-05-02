@@ -48,11 +48,11 @@ x:
 	inc dl
 	mov byte[ncount], dl
 
-next: 	add rdi, 8
+next:
+	add rdi, 8
 	dec byte[counter]
 	jnz iter
 
-debug1:
 rw 01, pmsg, pmsglen
 mov dl, byte[pcount]
 mov byte[val], dl
@@ -63,11 +63,9 @@ mov dl, byte[ncount]
 mov byte[val], dl
 call h2a
 
-debug:
 jmp ex
 
 h2a:
-
 mov al,byte[val]
 xh:
 cmp al,09h

@@ -14,7 +14,11 @@
 
 section .data
 counter db 05h
-arr dq 1234567891234567h, 0c325487652154687h, 0a789654574521354h, 0912357895314455h, 3545645445666556h
+
+;arr dq 1234567891234567h, 0c325487652154687h, 0a789654574521354h, 0912357895314455h, 3545645445666556h
+
+arr dq 0000000000000001h, 0000000000000005h, 0000000000000008h, 0000000000000003h, 0000000000000009h
+
 msg db "Largest Element: ", 10
 msglen equ $-msg
 
@@ -22,21 +26,19 @@ count db 10h
 
 
 section .bss
-
-result resb 02
-answer resb 16h
+answer resb 16
 
 section .text
     global _start
 
 _start:      
+
 mov rdi, arr
 mov rax, 00h    
 iter:
     cmp rax, [rdi]
     jae y
-   
-x: mov rax, [rdi]
+    mov rax, [rdi]
    
 y:
     add rdi, 8
@@ -44,11 +46,12 @@ y:
     jnz iter
 
     mov [answer], rax
-    call h2a
+  
+    call hextoascii
     jmp ex
 
-h2a:
-    mov byte[count], 10h
+hextoascii:
+    mov byte[count], 10h ;10h = 16 bytes
     mov rbx, answer
 iter1:
     rol rax, 04h

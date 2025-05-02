@@ -35,8 +35,8 @@ section .data
 
 
 section .bss
-    op resb 1
-bcdinp resb 6
+    choice resb 1
+    bcdinp resb 6
     temp resb 1
     count resb 1
     ahexinp resb 5
@@ -51,12 +51,12 @@ _start:
     back:
 
     rw 1, opm, opmlen
-    rw 0, op, 2
+    rw 0, choice, 2
 
-    cmp byte[op],  '1'
+    cmp byte[choice], 31h
     je case1
    
-    cmp byte[op], '2'
+    cmp byte[choice], 32h
     je case2
 
     exit

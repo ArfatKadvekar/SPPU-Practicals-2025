@@ -117,6 +117,7 @@ subproc:
 	mov [result], rax
 	call h2a
 	ret
+
 mulproc:
 	mov rax, [un1]
 	mov rbx, [un2]
@@ -130,11 +131,12 @@ smulproc:
 	imul rbx
 	call h2a
 	ret
+
 divproc: 
 	xor rdx, rdx
 	mov rax, qword[un1]
-	mov ebx, dword[un2]
-	div ebx
+	mov rbx, qword[un2]
+	div rbx
 	mov [quo], rax
 	mov [rmnd], rdx
 	rw 01, qmsg, qmsglen
@@ -149,19 +151,16 @@ sdivproc:
 	xor rdx, rdx
 	mov rax, qword[sn1]
 	mov rbx, qword[sn2]
-debug1:	idiv rbx
-debug2:	
+	idiv rbx
 	mov qword[squo], rax
 	mov [srmnd], rdx
-debug3:	rw 01, qmsg, qmsglen
+	rw 01, qmsg, qmsglen
 	mov rax, [squo]
-debug4:	call h2a
+	call h2a
 	rw 01, rmsg, rmsglen
 	mov rax, [srmnd]
-debug5:	call h2a
+    call h2a
 	ret
-	
-debug0:
 
 h2a:
     mov byte[count], 10h

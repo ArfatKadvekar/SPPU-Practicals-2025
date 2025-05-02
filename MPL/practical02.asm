@@ -33,7 +33,7 @@ rw 00,string , 100
 
 dec  al                ; Decrement al to compensate for trailing null character
 mov  bl  , al          ; Copy contents of al to bl
-mov  rsi , length      ; mov 'length' base address to rsi
+mov  rax , length      ; mov 'length' base address to rsi
 mov  rcx , 02h         ; reset counter to 0x02
 
 hextoascii:
@@ -46,8 +46,8 @@ add  dl  , 07h         ; Add 07h if greater than 09h
 
 copydigit:
 add  dl  , 30h         ; Add 30h always
-mov  [rsi]  ,  dl      ; copy byte from dl to location specified by rsi
-inc  rsi               ; increment rsi index
+mov  [rax]  ,  dl      ; copy byte from dl to location specified by rsi
+inc  rax               ; increment rsi index
 dec  rcx               ; decrement counter
 jnz  hextoascii        ; Go to 'up' hextoascii if rcx is not zero
 

@@ -94,15 +94,14 @@ pm:
    call htoa16
    jmp ex
    
-debug1:
  
 htoa16: 
     mov rbx, result
     mov byte[count], 10h
 iterh: 
-    rol rax, 04h
-    mov dl, al
-    and dl, 0Fh
+    rol ax, 04h
+    mov dx, ax
+    and dx, 0Fh
     cmp dl, 09h
     jle xh
     add dl, 07h  
@@ -113,15 +112,18 @@ iterh:
     inc rbx
     dec byte[count]
     jnz iterh
+    rw 01, result, 8
+    rw 01, endl, endlen
 ret
+
 
 htoa32: 
     mov rbx, result
     mov byte[count2], 20h
 iterh2: 
-    rol rax, 04h
-    mov dl, al
-    and dl, 0Fh
+    rol eax, 04h
+    mov edx, eax
+    and edx, 0Fh
     cmp dl, 09h
     jle xh2
     add dl, 07h  

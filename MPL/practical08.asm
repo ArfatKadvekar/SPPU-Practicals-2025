@@ -33,9 +33,11 @@ smsglen equ $-smsg
 
 dmsg db "--------------------Destination ----------------", 10
 dmsglen equ $-dmsg
+
 section .bss
-    result resb 16
+	result resb 16
     var resb 16
+
 section .text
     global _start
 
@@ -45,7 +47,8 @@ _start:
 source:
 	mov byte[cnt], 05h
 	mov rsi, arr
-iter:	mov qword[var], rsi
+iter:	
+	mov qword[var], rsi
 	push rsi
 	call h2a
 	rw 01, tab, tablen
@@ -62,6 +65,7 @@ iter:	mov qword[var], rsi
 	dec byte[cnt]
 	jnz iter
 
+;main logic 
 	mov rsi, arr + (4*8)
 	mov rdi, arr + (7*8)
 	mov rcx, 05h
@@ -73,7 +77,8 @@ iter:	mov qword[var], rsi
 dest:
 	mov byte[cnt], 05h
 	mov rsi, dst - 10h
-iterd:	mov qword[var], rsi
+iterd:	
+	mov qword[var], rsi
 	push rsi
 	call h2a
 	rw 01, tab, tablen
@@ -90,6 +95,7 @@ iterd:	mov qword[var], rsi
 	dec byte[cnt]
 	jnz iterd
 jmp ex
+
 
 h2a:
     mov byte[count], 10h
@@ -111,8 +117,6 @@ iteri:
     jnz iteri
     rw 01, result, 16
     rw 01, umsg, umsglen
-    
-    
     ret
 
 ex: exit 60
