@@ -1,5 +1,4 @@
-#include<iostream>
-#include<stack>  
+#include<iostream> 
 using namespace std;
 
 class Node
@@ -118,6 +117,7 @@ public:
         int rightHeight = height(temp->right);
         return max(leftHeight, rightHeight) + 1;
     }
+    
     int countTotalNodes(Node* temp, int &count){
         if (temp == nullptr) return 0;
         count++;

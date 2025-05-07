@@ -57,61 +57,66 @@ public:
         }
         return temp;
     }
-    void preOrder(Node *temp)
-    {
-        if (temp == nullptr)
-            return;
-
-        st.push(temp);
-
-        while (!st.isEmpty())
-        {
-            Node *current = st.pop();
-
-            cout << current->data << " ";
-
-            if (current->right)
-                st.push(current->right);
-
-            if (current->left)
-                st.push(current->left);
-        }
-    }
-
-    void postOrder(Node *temp) //this doesn't works fix this too
-    {
-        if (temp == nullptr)
-            return;
-
-        st.push(temp);
-
-        while (!st.isEmpty())
-        {
-            Node *current = st.pop();
-
-            if (current->right)
-                st.push(current->right);
-
-            if (current->left)
-                st.push(current->left);
-            
-            cout << current->data << " ";
-        }
-    }
-
-    void inOrder(Node* root) {
+    void inOrder(Node* temp){
+        if(temp == nullptr)
+        return;
         stack<Node*> st;
-        Node* current = root;
-        while (current != nullptr || !st.empty()) {
-            while (current != nullptr) {
-                st.push(current);
-                current = current->left;
+        while (!st.empty() || temp!=nullptr)
+        {
+            if(temp != nullptr){
+                st.push(temp);
+                temp = temp->left;
             }
-            current = st.top();
-            st.pop();
-            cout << current->data << " ";
-            current = current->right;
+            else{
+                temp = st.top();
+                st.pop();
+                cout << temp->data << " ";
+                temp = temp->right;
+            }
         }
+    }
+
+    void preOrder(Node* temp){
+        if(temp == nullptr)
+        return;
+        stack<Node*>st;
+        while (!st.empty() || temp!=nullptr)
+        {
+            if(temp!=nullptr){
+                cout << temp->data << " ";
+                st.push(temp);
+                temp = temp->left;
+            }
+            else{
+                temp = st.top();
+                st.pop();
+                temp = temp->right;
+            }
+        }
+    }
+
+    void postOrder(Node* temp){
+        if(temp == nullptr)
+        return;
+        stack<Node*> st1, st2;
+        st1.push(temp);
+        while (!st1.empty())
+        {
+            temp = st1.top();
+            st1.pop();
+            st2.push(temp); 
+            if(temp->left != nullptr){
+                st1.push(temp->left);
+            }
+            if(temp->right != nullptr){
+                st1.push(temp->right);
+            }
+        }
+        while (!st2.empty())
+        {
+            cout << st2.top()->data << " ";
+            st2.pop();
+        }  
     }
 
     int height(Node* root) {
