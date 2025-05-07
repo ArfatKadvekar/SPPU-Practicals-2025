@@ -5,7 +5,6 @@
 using namespace std;
 class Node
 {
-public: //fix this
     int data;
     Node *left;
     Node *right;
@@ -18,8 +17,6 @@ public:
 class BinaryTree
 {
     Node *root;
-    Stack<Node *> st;
-
 public:
     BinaryTree() : root(nullptr) {}
 
