@@ -1,7 +1,6 @@
 #include <iostream>
 #include<stack>
 #include<queue>
-#include "stack.cpp"
 using namespace std;
 class Node
 {
