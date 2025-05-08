@@ -13,18 +13,18 @@ public:
         n = 0;
     }
 
-    void insert(int x) {
+    void insert(int temp) {
         if (n >= MAX_SIZE - 1) {
             cout << "Heap is full\n";
             return;
         }
         n++;
         int i = n;
-        while (i > 1 && x > heap[i / 2]) {
+        while (i > 1 && temp > heap[i / 2]) {
             heap[i] = heap[i / 2];
             i = i / 2;
         }
-        heap[i] = x;
+        heap[i] = temp;
     }
 
     int deleteMax() {
