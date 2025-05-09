@@ -1,130 +1,115 @@
 #include <iostream>
+#include <map>
+#include <vector>
+#include <queue>
+#include <set>
+#include <sstream>  // For stringstream
+
 using namespace std;
 
-class Node {
-    int data;
-    Node* next;
-
-public:
-    Node(int d) {
-        data = d;
-        next = nullptr;
-    }
-
-    int getData() { return data; }
-    Node* getNext() { return next; }
-    void setNext(Node* n) { next = n; }
-
-    friend class Graph;
-};
-
 class Graph {
-    Node* head[20];
-    bool visited[20];
+    map<string, vector<string>> adj;
 
 public:
-    Graph(int v) {
-        for (int i = 1; i <= v; i++) {
-            head[i] = new Node(i); // create dummy head node for each vertex
-            visited[i] = false;
-        }
+    // Add edge between two landmarks (undirected)
+    void addEdge(string u, string v) {
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
 
-    void create(int edges) {
-        int src, dest;
-        for (int i = 1; i <= edges; i++) {
-            cout << "Enter source: ";
-            cin >> src;
-            cout << "Enter destination: ";
-            cin >> dest;
-
-            Node* temp = head[src];
-            while (temp->next != nullptr)
-                temp = temp->next;
-            temp->setNext(new Node(dest));
-
-            temp = head[dest];
-            while (temp->next != nullptr)
-                temp = temp->next;
-            temp->setNext(new Node(src)); // for undirected graph
-        }
-    }
-
-    void displayGraph(int vertices) {
+    // Display the adjacency list
+    void display() {
         cout << "\nGraph (Adjacency List):\n";
-        for (int i = 1; i <= vertices; i++) {
-            cout << "Vertex " << i << " -> ";
-            Node* temp = head[i]->getNext(); // skip dummy head
-            while (temp != nullptr) {
-                cout << temp->getData() << " ";
-                temp = temp->getNext();
+        for (auto& pair : adj) {
+            cout << pair.first << " -> ";
+            for (string neighbor : pair.second) {
+                cout << neighbor << " ";
             }
             cout << endl;
         }
     }
 
-    void BFS(int start) {
-        int queue[20], front = 0, rear = 0;
-        queue[++rear] = start;
-        visited[start] = true;
+    // BFS Traversal
+    void BFS(string start) {
+        set<string> visited;
+        queue<string> q;
 
-        cout << "BFS: ";
-        while (front < rear) {
-            int curr = queue[++front];
+        visited.insert(start);
+        q.push(start);
+
+        cout << "\nBFS: ";
+        while (!q.empty()) {
+            string curr = q.front();
+            q.pop();
             cout << curr << " ";
 
-            Node* temp = head[curr]->getNext();
-            while (temp != nullptr) {
-                int val = temp->getData();
-                if (!visited[val]) {
-                    queue[++rear] = val;
-                    visited[val] = true;
+            for (string neighbor : adj[curr]) {
+                if (visited.find(neighbor) == visited.end()) {
+                    visited.insert(neighbor);
+                    q.push(neighbor);
                 }
-                temp = temp->getNext();
             }
         }
         cout << endl;
     }
 
-    void DFS(int v, bool visited[]) {
-        cout << v << " ";
-        visited[v] = true;
+    // DFS Helper
+    void DFSHelper(string node, set<string>& visited) {
+        visited.insert(node);
+        cout << node << " ";
 
-        Node* temp = head[v]->getNext();
-        while (temp != nullptr) {
-            int nextNode = temp->getData();
-            if (!visited[nextNode])
-                DFS(nextNode, visited);
-            temp = temp->getNext();
+        for (string neighbor : adj[node]) {
+            if (visited.find(neighbor) == visited.end()) {
+                DFSHelper(neighbor, visited);
+            }
         }
+    }
+
+    // DFS Traversal
+    void DFS(string start) {
+        set<string> visited;
+        cout << "\nDFS: ";
+        DFSHelper(start, visited);
+        cout << endl;
     }
 };
 
 int main() {
-    int vertices, edges;
-    cout << "Enter number of vertices: ";
-    cin >> vertices;
+    Graph g;
+    int edgeCount;
+    string u, v, line;
 
-    Graph g(vertices);
+    cout << "Enter number of connections between landmarks: ";
+    cin >> edgeCount;
+    cin.ignore();  // Ignore the newline character left by cin
 
-    cout << "Enter number of edges: ";
-    cin >> edges;
-    g.create(edges);
+    // Getting edges from the user
+    for (int i = 0; i < edgeCount; i++) {
+        cout << "\nEnter source landmark: ";
+        getline(cin, u);  // Take the source landmark as input
 
-    g.displayGraph(vertices);
+        cout << "Enter connected landmarks (separated by commas): ";
+        getline(cin, line);  // Take multiple connected landmarks in one line
 
-    int bfsStart;
-    cout << "\nEnter starting vertex for BFS: ";
-    cin >> bfsStart;
-    g.BFS(bfsStart);
+        // Use stringstream to split the input by commas
+        stringstream ss(line);
+        while (getline(ss, v, ',')) {  // Split based on commas
+            g.addEdge(u, v);  // Add an edge between source and each destination
+        }
+    }
 
-    int dfsStart;
-    bool visited[21] = { false };
-    cout << "\nEnter starting vertex for DFS: ";
-    cin >> dfsStart;
-    cout << "DFS: ";
-    g.DFS(dfsStart, visited);
-    cout << endl;
+    g.display();
+
+    string startBFS, startDFS;
+    cout << "\nEnter starting landmark for BFS: ";
+    getline(cin, startBFS);  // Take full name for BFS
+
+    g.BFS(startBFS);
+
+    cout << "\nEnter starting landmark for DFS: ";
+    getline(cin, startDFS);  // Take full name for DFS
+
+    g.DFS(startDFS);
 
     return 0;
 }

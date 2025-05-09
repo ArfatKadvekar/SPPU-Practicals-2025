@@ -30,6 +30,8 @@ public:
     MyFile() {
         cout << "Enter filename (with .txt): ";
         cin >> filename;
+        ofstream clear(filename);
+        clear.close();
     }
 
     void addRecord() {
